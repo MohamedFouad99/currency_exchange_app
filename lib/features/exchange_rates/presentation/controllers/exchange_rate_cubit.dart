@@ -1,0 +1,48 @@
+import 'package:dartz/dartz.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/error/failures.dart';
+import '../../domain/entities/exchange_rate_entity.dart';
+import '../../domain/usecases/get_exchange_rates.dart';
+import 'exchange_rate_state.dart';
+
+// date: 6 March 2025
+// by: Fouad
+// last modified at: 6 March 2025
+// purpose: Create a cubit class that fetches exchange rates from the repository.
+// The cubit class extends the Cubit class and implements the fetchRates method.
+// The cubit class emits states based on the result of the exchange rate use case.
+class ExchangeRateCubit extends Cubit<ExchangeRateState> {
+  final GetExchangeRates getExchangeRates;
+
+  ExchangeRateCubit(this.getExchangeRates) : super(ExchangeRateInitial());
+
+  /// Fetches exchange rates for the given date range and currency pair.
+  ///
+  /// Emits [ExchangeRateLoading] state before starting the fetch operation.
+  /// Then, attempts to execute the exchange rate retrieval use case with the
+  /// provided [startDate], [endDate], [base], and [target] parameters.
+  ///
+  /// If successful, emits [ExchangeRateLoaded] with the retrieved data.
+  /// If an error occurs, emits [ExchangeRateError] with the failure message.
+  ///
+  /// [startDate] and [endDate] should be in the format 'YYYY-MM-DD'.
+  /// [base] is the base currency code (e.g., 'USD').
+  /// [target] is the target currency code (e.g., 'EUR').
+
+  void fetchRates(
+    String startDate,
+    String endDate,
+    String base,
+    String target,
+  ) async {
+    emit(ExchangeRateLoading());
+
+    final Either<Failure, ExchangeRateEntity> result = await getExchangeRates
+        .execute(startDate, endDate, base, target);
+
+    result.fold(
+      (failure) => emit(ExchangeRateError(failure.message)),
+      (exchangeRate) => emit(ExchangeRateLoaded(exchangeRate)),
+    );
+  }
+}
