@@ -34,7 +34,7 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
       );
       return Right(result);
     } catch (e) {
-      return Left(Failure(e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/di/dependency_injection.dart';
 import 'features/exchange_rates/presentation/controllers/exchange_rate_cubit.dart';
-import 'features/exchange_rates/presentation/pages/exchange_rate_page.dart';
+import 'features/exchange_rates/presentation/ui/pages/exchange_rate_page.dart';
 
 //date: 6 March 2025
 //by: Fouad
@@ -25,11 +26,15 @@ class MyApp extends StatelessWidget {
   /// `ExchangeRateCubit`, and returns a `MaterialApp` with the
   /// `ExchangeRatePage` as its home screen.
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<ExchangeRateCubit>(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: ExchangeRatePage(),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      child: BlocProvider(
+        create: (_) => getIt<ExchangeRateCubit>(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: ExchangeRatePage(),
+        ),
       ),
     );
   }

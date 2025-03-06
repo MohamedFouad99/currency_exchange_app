@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/error/failures.dart';
@@ -15,6 +17,27 @@ class ExchangeRateCubit extends Cubit<ExchangeRateState> {
   final GetExchangeRates getExchangeRates;
 
   ExchangeRateCubit(this.getExchangeRates) : super(ExchangeRateInitial());
+  String? startDate;
+  String? endDate;
+  String? base;
+  String? target;
+  void setStartDate(String date) {
+    startDate = date;
+    emit(ExchangeRateInitial());
+  }
+
+  void setEndDate(String date) {
+    endDate = date;
+    emit(ExchangeRateInitial());
+  }
+
+  void setBase(String currency) {
+    base = currency;
+  }
+
+  void setTarget(String currency) {
+    target = currency;
+  }
 
   /// Fetches exchange rates for the given date range and currency pair.
   ///
@@ -29,20 +52,20 @@ class ExchangeRateCubit extends Cubit<ExchangeRateState> {
   /// [base] is the base currency code (e.g., 'USD').
   /// [target] is the target currency code (e.g., 'EUR').
 
-  void fetchRates(
-    String startDate,
-    String endDate,
-    String base,
-    String target,
-  ) async {
+  void fetchRates() async {
     emit(ExchangeRateLoading());
-
-    final Either<Failure, ExchangeRateEntity> result = await getExchangeRates
-        .execute(startDate, endDate, base, target);
-
-    result.fold(
-      (failure) => emit(ExchangeRateError(failure.message)),
-      (exchangeRate) => emit(ExchangeRateLoaded(exchangeRate)),
-    );
+    if (startDate == null ||
+        endDate == null ||
+        base == null ||
+        target == null) {
+      emit(ExchangeRateError("Please enter all fields"));
+    } else {
+      final Either<Failure, ExchangeRateEntity> result = await getExchangeRates
+          .execute(startDate!, endDate!, base!, target!);
+      result.fold(
+        (failure) => emit(ExchangeRateError(failure.message)),
+        (exchangeRate) => emit(ExchangeRateLoaded(exchangeRate)),
+      );
+    }
   }
 }
