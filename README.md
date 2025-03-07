@@ -1,16 +1,97 @@
-# currency_exchange_app
+# 💱 Currency Exchange App
 
-A new Flutter project.
 
-## Getting Started
+## A Flutter application that allows users to track and convert currency exchange rates in real-time.
 
-This project is a starting point for a Flutter application.
+# 🚀 Features
 
-A few resources to get you started if this is your first Flutter project:
+### 🔹 Real-Time Exchange Rates – Fetches up-to-date currency exchange rates.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 🔹 Currency Conversion – Converts amounts between different currencies.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 🔹 Historical Data – Displays past exchange rates for a selected date range.
+
+### 🔹 Pagination – Loads exchange rate data efficiently in chunks.
+
+### 🔹 User-Friendly Interface – Intuitive and responsive design.
+
+# 📂 Project Structure
+## 📂 lib/  
+### ├── 📂 core/                              # Core utilities and configurations  
+│   ├── 📂 network/                      # API service (Dio)  
+│   ├── 📂 error/                       # Error handling (Failure, Exceptions)  
+│   ├── 📂 utils/                 # Helper functions and constants  
+│   ├── 📂 theme/                 # App themes and styles  
+│   ├── 📂 di/                    # Dependency Injection (GetIt)  
+│   ├── 📂 usecases/              # Base use case classes  
+│   ├── 📂 navigation/            # App navigation and routes  
+│   └── 📂 widgets/               # Global reusable widgets  
+│  
+### ├── 📂 features/                   # Application features  
+#### │   ├── 📂 exchange_rate/          # Exchange rate feature  
+##### │   │   ├── 📂 data/               # Data layer (repositories, data sources, models)  
+│   │   │   ├── 📂 models/         # Data models  
+│   │   │   ├── 📂 data_sources/   # Remote & local data sources  
+│   │   │   ├── 📂 repositories/   # Repository implementation  
+│   │   │   └── 📂 api/            # API integration  
+##### │   │   ├── 📂 domain/             # Business logic layer  
+│   │   │   ├── 📂 entities/       # Core application entities  
+│   │   │   ├── 📂 usecases/       # Application use cases  
+│   │   │   └── 📂 repositories/   # Abstract repository contracts  
+##### │   │   ├── 📂 presentation/       # UI layer  
+│   │   │   ├── 📂 pages/          # Screens & pages  
+│   │   │   ├── 📂 cubit/          # State management (Cubit)  
+│   │   │   ├── 📂 widgets/        # UI components  
+│   │   │   └── 📂 controllers/    # UI logic controllers  
+│  
+├── 📄 main.dart                   # App entry point  
+
+
+
+# 📡 API Integration
+
+## The app integrates with ExchangeRate.host API to fetch real-time currency exchange rates.
+
+
+### 🔹 Base URL: https://api.exchangerate.host/
+
+### 🔹 Endpoints:
+
+#### /timeframe → Retrieves historical exchange rates.
+
+
+# 🛠️ Example API Request:
+
+## https://api.exchangerate.host/timeframe?start_date=2024-12-01&end_date=2025-01-04&source=USD
+
+
+# 📌 Dependencies
+
+### 🔹 Flutter – The core framework.
+
+### 🔹 Dio – For making HTTP requests.
+
+### 🔹 intl – Date formatting and localization.
+
+### 🔹 bloc – State management.
+
+### 🔹 get_it – Dependency injection.
+
+
+
+
+
+# 🤝 Contributing
+
+## Contributions are welcome! Follow these steps:
+
+
+### 1️⃣ Fork the repository.
+
+### 2️⃣ Create a feature branch
+
+### 3️⃣ Commit your changes
+
+### 4️⃣ Push to GitHub
+
+### 5️⃣ Create a Pull Request.
