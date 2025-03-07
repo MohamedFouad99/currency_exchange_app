@@ -123,7 +123,7 @@ class ExchangeRateTable extends StatelessWidget {
                     // Create the date cell
                     Center(
                       child: Text(
-                        DateFormat('MMMM dd, yyyy').format(date),
+                        DateFormat('MMM dd, yyyy').format(date),
                         style: TextStyles.font14DarkBlueBold,
                         textAlign: TextAlign.center,
                       ),

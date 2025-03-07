@@ -96,9 +96,7 @@ class ExchangeRatePage extends StatelessWidget {
                     (date) => cubit.setStartDate(
                       date,
                     ), // Updates the start date in the cubit
-                firstDate: DateTime.now().subtract(
-                  Duration(days: 365),
-                ), // Sets the earliest selectable date to one year ago
+                firstDate: DateTime(2001),
                 lastDate:
                     DateTime.now(), // Sets the latest selectable date to today
               ),
@@ -117,9 +115,8 @@ class ExchangeRatePage extends StatelessWidget {
                         ? DateTime.parse(
                           cubit.startDate!,
                         ) // Sets the earliest selectable date to the selected start date
-                        : DateTime.now().subtract(
-                          Duration(days: 365),
-                        ), // Defaults to one year ago if no start date is selected
+                        : DateTime(2001),
+
                 lastDate:
                     DateTime.now(), // Sets the latest selectable date to today
               ),

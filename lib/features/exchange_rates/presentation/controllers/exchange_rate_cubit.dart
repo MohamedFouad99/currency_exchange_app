@@ -42,68 +42,28 @@ class ExchangeRateCubit extends Cubit<ExchangeRateState> {
     target = currency;
   }
 
-  /// Fetches exchange rates for the given date range and currency pair.
+  /// Fetches the exchange rates from the repository and emits the state based on the result.
   ///
-  /// Emits [ExchangeRateLoading] state before starting the fetch operation.
-  /// Then, attempts to execute the exchange rate retrieval use case with the
-  /// provided [startDate], [endDate], [base], and [target] parameters.
+  /// If [loadMore] is true, it fetches the next page of the exchange rates.
   ///
-  /// If successful, emits [ExchangeRateLoaded] with the retrieved data.
-  /// If an error occurs, emits [ExchangeRateError] with the failure message.
+  /// If [isPrevious] is true, it fetches the previous page of the exchange rates.
   ///
-  /// [startDate] and [endDate] should be in the format 'YYYY-MM-DD'.
-  /// [base] is the base currency code (e.g., 'USD').
-  /// [target] is the target currency code (e.g., 'EUR').
-
+  /// If the fields are empty, it emits an [ExchangeRateError] state.
+  ///
+  /// If the fields are valid, it fetches the exchange rates from the repository.
   void fetchRates({bool loadMore = false, bool isPrevious = false}) async {
     DateTime startDateTime = DateTime.parse(startDate!);
     DateTime endDateTime = DateTime.parse(endDate!);
-    int difference = endDateTime.difference(startDateTime).inDays;
+    int totalDays = endDateTime.difference(startDateTime).inDays;
     emit(ExchangeRateLoading());
-    if (startDate == null ||
-        endDate == null ||
-        base == null ||
-        target == null) {
+    if (_areFieldsEmpty()) {
       emit(ExchangeRateError("Please enter all fields"));
     } else {
       //first page
       if (!loadMore && !isPrevious) {
-        _currentPage = 1;
-        _allRates.clear();
-        _isLastPage = false;
-        emit(ExchangeRateLoading());
-        final Either<Failure, ExchangeRateEntity> result =
-            await getExchangeRates.execute(
-              startDate!,
-              difference > 10
-                  ? DateFormat(
-                    'yyyy-MM-dd',
-                  ).format(startDateTime.add(Duration(days: 9)))
-                  : endDate!,
-              base!,
-              target!,
-              _currentPage,
-            );
-        result.fold((failure) => emit(ExchangeRateError(failure.message)), (
-          exchangeRate,
-        ) {
-          _allRates =
-              exchangeRate.rates.entries
-                  .map((entry) => MapEntry(entry.key, entry.value as double))
-                  .toList();
-          emit(
-            ExchangeRateLoaded(
-              exchangeRate.base,
-              exchangeRate.target,
-              _allRates,
-              exchangeRate.rates.keys.lastOrNull == endDate,
-              _currentPage == 1,
-            ),
-          );
-        });
-        //////////////////////////
-        // back
+        _fetchFirstPage(startDateTime, totalDays);
       } else if (isPrevious && _currentPage > 1) {
+        //Previous page
         _currentPage--; // Move to previous page
         emit(
           ExchangeRateLoaded(
@@ -114,63 +74,130 @@ class ExchangeRateCubit extends Cubit<ExchangeRateState> {
             _currentPage == 1,
           ),
         );
-        //load more
       } else if (loadMore && !_isLastPage) {
-        _currentPage++; // Move to next page
-        if (_allRates.length >= min(_currentPage * 10, difference)) {
-          emit(
-            ExchangeRateLoaded(
-              base!,
-              target!,
-              _allRates.sublist(
-                10 * (_currentPage - 1),
-                difference < 10 * _currentPage
-                    ? difference + 1
-                    : 10 * _currentPage,
-              ),
-              difference < 10 * _currentPage,
-              _currentPage == 1,
-            ),
-          );
-        } else {
-          emit(ExchangeRateLoading());
-          final Either<Failure, ExchangeRateEntity> result =
-              await getExchangeRates.execute(
-                DateFormat('yyyy-MM-dd').format(
-                  startDateTime.add(Duration(days: (_currentPage - 1) * 10)),
-                ),
-                difference > 10 * _currentPage
-                    ? DateFormat('yyyy-MM-dd').format(
-                      startDateTime.add(
-                        Duration(days: (_currentPage * 10) - 1),
-                      ),
-                    )
-                    : endDate!,
-
-                base!,
-                target!,
-                _currentPage,
-              );
-          result.fold((failure) => emit(ExchangeRateError(failure.message)), (
-            exchangeRate,
-          ) {
-            _allRates.addAll(
-              exchangeRate.rates.entries
-                  .map((entry) => MapEntry(entry.key, entry.value as double))
-                  .toList(),
-            );
-            emit(
-              ExchangeRateLoaded(
-                exchangeRate.base,
-                exchangeRate.target,
-                _allRates.sublist(10 * (_currentPage - 1), _allRates.length),
-                exchangeRate.rates.keys.lastOrNull == endDate,
-                _currentPage == 1,
-              ),
-            );
-          });
-        }
+        //Next page
+        _fetchNextPage(startDateTime, totalDays);
       }
     }
+  }
+
+  /// Fetches the next page of exchange rates from the repository and emits the state based on the result.
+  ///
+  /// If the end date is reached, it emits an [ExchangeRateLoaded] state with the isLastPage flag set to true.
+  ///
+  /// If the next page is not available, it emits an [ExchangeRateError] state.
+  void _fetchNextPage(DateTime startDateTime, int totalDays) async {
+    _currentPage++; // Move to next page
+    if (_allRates.length >= min(_currentPage * 10, totalDays)) {
+      emit(
+        ExchangeRateLoaded(
+          base!,
+          target!,
+          _allRates.sublist(
+            10 * (_currentPage - 1),
+            totalDays < 10 * _currentPage ? totalDays + 1 : 10 * _currentPage,
+          ),
+          totalDays < 10 * _currentPage,
+          _currentPage == 1,
+        ),
+      );
+    } else {
+      emit(ExchangeRateLoading());
+      final Either<Failure, ExchangeRateEntity> result = await getExchangeRates
+          .execute(
+            DateFormat('yyyy-MM-dd').format(
+              startDateTime.add(Duration(days: (_currentPage - 1) * 10)),
+            ),
+            totalDays > 10 * _currentPage
+                ? DateFormat('yyyy-MM-dd').format(
+                  startDateTime.add(Duration(days: (_currentPage * 10) - 1)),
+                )
+                : endDate!,
+
+            base!,
+            target!,
+            _currentPage,
+          );
+      result.fold((failure) => emit(ExchangeRateError(failure.message)), (
+        exchangeRate,
+      ) {
+        _allRates.addAll(_convertRates(exchangeRate));
+        emit(
+          ExchangeRateLoaded(
+            exchangeRate.base,
+            exchangeRate.target,
+            _allRates.sublist(10 * (_currentPage - 1), _allRates.length),
+            exchangeRate.rates.keys.lastOrNull == endDate,
+            _currentPage == 1,
+          ),
+        );
+      });
+    }
+  }
+
+  ///Resets pagination for the first fetch
+  void _resetPagination() {
+    _currentPage = 1;
+    _allRates.clear();
+    _isLastPage = false;
+  }
+
+  /// Fetches the first page of exchange rates and updates the state accordingly.
+  ///
+  /// This method resets pagination and emits a loading state before fetching.
+  /// It uses the provided [startDateTime] and [totalDays] to determine the date range
+  /// for the first page request. If the fetch is successful, it converts the rates
+  /// and emits a loaded state with the exchange rates. If an error occurs, it emits
+  /// an error state with the failure message.
+
+  void _fetchFirstPage(DateTime startDateTime, int totalDays) async {
+    _resetPagination();
+    emit(ExchangeRateLoading());
+    final Either<Failure, ExchangeRateEntity> result = await getExchangeRates
+        .execute(
+          startDate!,
+          totalDays > 10
+              ? DateFormat(
+                'yyyy-MM-dd',
+              ).format(startDateTime.add(Duration(days: 9)))
+              : endDate!,
+          base!,
+          target!,
+          _currentPage,
+        );
+    result.fold((failure) => emit(ExchangeRateError(failure.message)), (
+      exchangeRate,
+    ) {
+      _allRates = _convertRates(exchangeRate);
+      emit(
+        ExchangeRateLoaded(
+          exchangeRate.base,
+          exchangeRate.target,
+          _allRates,
+          exchangeRate.rates.keys.lastOrNull == endDate,
+          _currentPage == 1,
+        ),
+      );
+    });
+  }
+
+  /// Converts the exchange rate map from the entity to a list of map entries
+  /// where the key is the date in the format 'yyyy-MM-dd' and the value is the
+  /// exchange rate as a double.
+  List<MapEntry<String, double>> _convertRates(
+    ExchangeRateEntity exchangeRate,
+  ) {
+    return exchangeRate.rates.entries
+        .map((entry) => MapEntry(entry.key, entry.value as double))
+        .toList();
+  }
+
+  /// Checks if any of the mandatory fields required for fetching
+  /// exchange rates are empty or null.
+  bool _areFieldsEmpty() {
+    return startDate == null ||
+        endDate == null ||
+        base == null ||
+        target == null;
   }
 }

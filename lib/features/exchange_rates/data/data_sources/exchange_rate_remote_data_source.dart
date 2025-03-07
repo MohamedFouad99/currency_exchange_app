@@ -12,24 +12,22 @@ class ExchangeRateRemoteDataSource {
 
   ExchangeRateRemoteDataSource({required this.dio});
 
-  /// Fetches exchange rates from the remote API for a specified timeframe and currency pair.
+  /// Fetches exchange rates from the API and returns them as a right value of an Either.
+  /// If an error occurs, it returns a left value of an Either with a ServerFailure.
   ///
-  /// Throws:
-  /// - [Exception] if the API call fails or if the response indicates an error.
+  /// The error message will include the error message from the remote data source.
   ///
-  /// Parameters:
-  /// - [startDate]: The start date for the exchange rates in YYYY-MM-DD format.
-  /// - [endDate]: The end date for the exchange rates in YYYY-MM-DD format.
-  /// - [base]: The base currency code (e.g., USD).
-  /// - [target]: The target currency code (e.g., EUR).
-  /// - [page]: The page number for pagination (starting from 1).
+  /// The API endpoint is: https://exchangerate-api.com/docs
   ///
-  /// Returns:
-  /// - A [Future] that completes with an [ExchangeRateModel] containing the exchange rates.
-  /// - The exchange rates are paginated based on the [page] parameter.
-  /// - The exchange rates are sorted by date in ascending order.
-  /// - The exchange rates are converted to the target currency.
-
+  /// The following parameters are required:
+  ///
+  /// - [startDate]: The start date in the format "yyyy-mm-dd"
+  /// - [endDate]: The end date in the format "yyyy-mm-dd"
+  /// - [base]: The base currency
+  /// - [target]: The target currency
+  ///
+  /// The response will contain a sorted list of exchange rates by date.
+  /// The list will be a map with the keys being the dates and the values being the exchange rate.
   Future<ExchangeRateModel> getExchangeRates(
     String startDate,
     String endDate,
