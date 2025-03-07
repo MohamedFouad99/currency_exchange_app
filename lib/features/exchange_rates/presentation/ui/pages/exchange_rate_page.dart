@@ -331,8 +331,11 @@ class ExchangeRatePage extends StatelessWidget {
             children: [
               IconButton(
                 icon: Icon(
-                  Icons.arrow_back,
-                  color: isFirstPage ? Colors.grey : Colors.blue,
+                  Icons.arrow_back_ios,
+                  color:
+                      isFirstPage
+                          ? ColorsManager.gray
+                          : ColorsManager.secondary,
                 ),
                 onPressed:
                     isFirstPage
@@ -347,8 +350,9 @@ class ExchangeRatePage extends StatelessWidget {
               SizedBox(width: 20),
               IconButton(
                 icon: Icon(
-                  Icons.arrow_forward,
-                  color: isLastPage ? Colors.grey : Colors.blue,
+                  Icons.arrow_forward_ios,
+                  color:
+                      isLastPage ? ColorsManager.gray : ColorsManager.secondary,
                 ),
                 onPressed:
                     isLastPage
