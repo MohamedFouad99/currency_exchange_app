@@ -9,7 +9,7 @@ import '../model/exchange_rate_model.dart';
 
 class ExchangeRateRemoteDataSource {
   final Dio dio;
-
+  static const int pageSize = 10; // Fetch 10 records per request
   ExchangeRateRemoteDataSource({required this.dio});
 
   /// Fetches exchange rates from the remote API for a specified timeframe and currency pair.
@@ -31,6 +31,7 @@ class ExchangeRateRemoteDataSource {
     String endDate,
     String base,
     String target,
+    int page,
   ) async {
     try {
       final response = await dio.get(
@@ -44,7 +45,23 @@ class ExchangeRateRemoteDataSource {
       );
 
       if (response.statusCode == 200 && response.data["success"] == true) {
-        return ExchangeRateModel.fromJson(response.data, target);
+        final allRates = response.data["quotes"] as Map<String, dynamic>;
+
+        // Convert map entries to a sorted list
+        final sortedRates =
+            allRates.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+
+        // Pagination: extract only the required range of data
+        final startIdx = (page - 1) * pageSize;
+        final endIdx = startIdx + pageSize;
+        final paginatedRates = sortedRates.sublist(
+          startIdx,
+          endIdx.clamp(0, sortedRates.length),
+        );
+        return ExchangeRateModel.fromJson({
+          "quotes": Map.fromEntries(paginatedRates),
+          "source": base,
+        }, target);
       } else {
         throw Exception("API Error: ${response.statusMessage}");
       }

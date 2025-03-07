@@ -14,16 +14,9 @@ import '../../../../../core/theming/style.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/drop_down_item.dart';
 
-class ExchangeRatePage extends StatefulWidget {
-  @override
-  _ExchangeRatePageState createState() => _ExchangeRatePageState();
-}
+class ExchangeRatePage extends StatelessWidget {
+  const ExchangeRatePage({super.key});
 
-class _ExchangeRatePageState extends State<ExchangeRatePage> {
-  int _currentPage = 0;
-  static const int _rowsPerPage = 10;
-
-  @override
   Widget build(BuildContext context) {
     final cubit = context.read<ExchangeRateCubit>();
     return Scaffold(
@@ -208,6 +201,7 @@ class _ExchangeRatePageState extends State<ExchangeRatePage> {
               verticalSpace(6),
               Divider(color: ColorsManager.gray, thickness: .8),
               _buildExchangeRateTable(),
+              _buildPaginationControls(),
             ],
           ),
         ),
@@ -220,10 +214,9 @@ class _ExchangeRatePageState extends State<ExchangeRatePage> {
   Widget _buildExchangeRateTable() {
     return BlocBuilder<ExchangeRateCubit, ExchangeRateState>(
       builder: (context, state) {
-        if (state is ExchangeRateLoading) {
+        if (state is ExchangeRateLoading && state is! ExchangeRateLoaded) {
           return Center(child: CircularProgressIndicator());
         } else if (state is ExchangeRateLoaded) {
-          final exchangeRates = state.exchangeRate.rates.entries.toList();
           return Container(
             margin: EdgeInsets.only(top: 8.h),
             width: double.infinity,
@@ -267,7 +260,7 @@ class _ExchangeRatePageState extends State<ExchangeRatePage> {
                 ),
               ],
               rows:
-                  exchangeRates.map((entry) {
+                  state.rates.map((entry) {
                     return DataRow(
                       cells: [
                         DataCell(
@@ -282,7 +275,7 @@ class _ExchangeRatePageState extends State<ExchangeRatePage> {
                         DataCell(
                           Center(
                             child: Text(
-                              state.exchangeRate.base,
+                              state.base,
                               style: TextStyles.font14DarkBlueBold,
                               textAlign: TextAlign.center,
                             ),
@@ -291,7 +284,7 @@ class _ExchangeRatePageState extends State<ExchangeRatePage> {
                         DataCell(
                           Center(
                             child: Text(
-                              state.exchangeRate.target,
+                              state.target,
                               style: TextStyles.font14DarkBlueBold,
                               textAlign: TextAlign.center,
                             ),
@@ -324,32 +317,53 @@ class _ExchangeRatePageState extends State<ExchangeRatePage> {
     );
   }
 
-  /////////////////////////////////////////////////////////////////
-  ///  Pagination Controls**
-  // Widget _buildPaginationControls(int totalPages) {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       Text("Page ${_currentPage + 1} of $totalPages"),
-  //       Row(
-  //         children: [
-  //           IconButton(
-  //             icon: Icon(Icons.arrow_back),
-  //             onPressed:
-  //                 _currentPage > 0
-  //                     ? () => setState(() => _currentPage--)
-  //                     : null,
-  //           ),
-  //           IconButton(
-  //             icon: Icon(Icons.arrow_forward),
-  //             onPressed:
-  //                 _currentPage < totalPages - 1
-  //                     ? () => setState(() => _currentPage++)
-  //                     : null,
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
+  /// **🔹 Load More Button**
+  Widget _buildPaginationControls() {
+    return BlocBuilder<ExchangeRateCubit, ExchangeRateState>(
+      builder: (context, state) {
+        if (state is ExchangeRateLoaded) {
+          final isLastPage = state.isLastPage; // True if there's no more data
+          final isFirstPage =
+              state.isFirstPage; // True if we're on the first page
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: isFirstPage ? Colors.grey : Colors.blue,
+                ),
+                onPressed:
+                    isFirstPage
+                        ? null
+                        : () {
+                          context.read<ExchangeRateCubit>().fetchRates(
+                            loadMore: false, // Go to the previous page
+                            isPrevious: true,
+                          );
+                        },
+              ),
+              SizedBox(width: 20),
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_forward,
+                  color: isLastPage ? Colors.grey : Colors.blue,
+                ),
+                onPressed:
+                    isLastPage
+                        ? null
+                        : () {
+                          context.read<ExchangeRateCubit>().fetchRates(
+                            loadMore: true, // Load the next page
+                          );
+                        },
+              ),
+            ],
+          );
+        }
+        return Container();
+      },
+    );
+  }
 }

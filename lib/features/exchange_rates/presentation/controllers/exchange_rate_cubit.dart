@@ -15,7 +15,9 @@ import 'exchange_rate_state.dart';
 // The cubit class emits states based on the result of the exchange rate use case.
 class ExchangeRateCubit extends Cubit<ExchangeRateState> {
   final GetExchangeRates getExchangeRates;
-
+  int _currentPage = 1;
+  List<MapEntry<String, double>> _allRates = []; // Stores fetched data
+  bool _isLastPage = false;
   ExchangeRateCubit(this.getExchangeRates) : super(ExchangeRateInitial());
   String? startDate;
   String? endDate;
@@ -52,7 +54,7 @@ class ExchangeRateCubit extends Cubit<ExchangeRateState> {
   /// [base] is the base currency code (e.g., 'USD').
   /// [target] is the target currency code (e.g., 'EUR').
 
-  void fetchRates() async {
+  void fetchRates({bool loadMore = false, bool isPrevious = false}) async {
     emit(ExchangeRateLoading());
     if (startDate == null ||
         endDate == null ||
@@ -60,12 +62,36 @@ class ExchangeRateCubit extends Cubit<ExchangeRateState> {
         target == null) {
       emit(ExchangeRateError("Please enter all fields"));
     } else {
+      if (!loadMore && !isPrevious) {
+        _currentPage = 1;
+        _allRates.clear();
+        _isLastPage = false;
+        emit(ExchangeRateLoading());
+      } else if (isPrevious && _currentPage > 1) {
+        _currentPage--; // Move to previous page
+      } else if (loadMore && !_isLastPage) {
+        _currentPage++; // Move to next page
+      }
+
       final Either<Failure, ExchangeRateEntity> result = await getExchangeRates
-          .execute(startDate!, endDate!, base!, target!);
-      result.fold(
-        (failure) => emit(ExchangeRateError(failure.message)),
-        (exchangeRate) => emit(ExchangeRateLoaded(exchangeRate)),
-      );
+          .execute(startDate!, endDate!, base!, target!, _currentPage);
+      result.fold((failure) => emit(ExchangeRateError(failure.message)), (
+        exchangeRate,
+      ) {
+        _allRates =
+            exchangeRate.rates.entries
+                .map((entry) => MapEntry(entry.key, entry.value as double))
+                .toList();
+        emit(
+          ExchangeRateLoaded(
+            exchangeRate.base,
+            exchangeRate.target,
+            _allRates,
+            exchangeRate.rates.keys.lastOrNull == endDate,
+            _currentPage == 1,
+          ),
+        );
+      });
     }
   }
 }

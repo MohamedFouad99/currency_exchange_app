@@ -1,5 +1,3 @@
-import '../../domain/entities/exchange_rate_entity.dart';
-
 // date: 6 March 2025
 // by: Fouad
 // last modified at: 6 March 2025
@@ -12,9 +10,19 @@ class ExchangeRateInitial extends ExchangeRateState {}
 class ExchangeRateLoading extends ExchangeRateState {}
 
 class ExchangeRateLoaded extends ExchangeRateState {
-  final ExchangeRateEntity exchangeRate;
+  final String base;
+  final String target;
+  final List<MapEntry<String, double>> rates;
+  final bool isLastPage;
+  final bool isFirstPage;
 
-  ExchangeRateLoaded(this.exchangeRate);
+  ExchangeRateLoaded(
+    this.base,
+    this.target,
+    this.rates,
+    this.isLastPage,
+    this.isFirstPage,
+  );
 }
 
 class ExchangeRateError extends ExchangeRateState {
