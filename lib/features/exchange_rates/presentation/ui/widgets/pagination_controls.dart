@@ -9,12 +9,12 @@ class PaginationControls extends StatelessWidget {
   final VoidCallback onNext;
 
   const PaginationControls({
-    Key? key,
+    super.key,
     required this.isFirstPage,
     required this.isLastPage,
     required this.onPrevious,
     required this.onNext,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

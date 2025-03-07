@@ -2,6 +2,8 @@
 // by: Fouad
 // last modified at: 6 March 2025
 // purpose: Create a class that contains constants used in the application.
+// The class contains the base URL and API key for the API.
+// It also contains a list of currencies used in the application.
 class AppConstants {
   static const String baseUrl = "https://api.exchangerate.host/";
   static const String apiKey = "8d86c407f69c24801fb3b7cf3fe1be6a";

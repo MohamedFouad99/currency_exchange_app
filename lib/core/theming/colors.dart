@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+//date: 6 March 2025
+//by: Fouad
+//last modified at: 6 March 2025
+//purpose: Create a class that contains colors used in the application.
 class ColorsManager {
   static const Color primary = Color(0xFF15405A);
   static const Color secondary = Color(0xFF55BFCF);

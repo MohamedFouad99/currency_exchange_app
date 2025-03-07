@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+//date: 6 March 2025
+//by: Fouad
+//last modified at: 7 March 2025
+//description: Adding Up Down Transition to a given child
 
-///Adding Up Down Transition to a given child
 class UpDownAnimation extends StatefulWidget {
   final Widget child;
   final double? y;
@@ -28,7 +31,6 @@ class UpDownAnimationState extends State<UpDownAnimation>
   final bool isAnimatable = true;
 
   @override
-
   /// Initializes the animation controller and tweens when the widget is
   /// initialized. If the widget is not animatable, this does nothing.
   void initState() {
@@ -39,9 +41,10 @@ class UpDownAnimationState extends State<UpDownAnimation>
         duration: const Duration(seconds: 1),
       );
       translateAnimation = Tween<Offset>(
-        begin: widget.reverse ?? false
-            ? Offset(0, widget.y ?? 1)
-            : Offset(0, widget.y ?? -1),
+        begin:
+            widget.reverse ?? false
+                ? Offset(0, widget.y ?? 1)
+                : Offset(0, widget.y ?? -1),
         end: Offset.zero,
       ).animate(
         CurvedAnimation(
@@ -49,27 +52,26 @@ class UpDownAnimationState extends State<UpDownAnimation>
           curve: Curves.fastEaseInToSlowEaseOut,
         ),
       );
-      fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(
-          parent: controller,
-          curve: Curves.ease,
-        ),
+      fadeAnimation = Tween<double>(
+        begin: 0,
+        end: 1,
+      ).animate(CurvedAnimation(parent: controller, curve: Curves.ease));
+      Future.delayed(Duration(milliseconds: (500 * widget.delay).round())).then(
+        (value) {
+          controller.forward();
+        },
       );
-      Future.delayed(Duration(milliseconds: (500 * widget.delay).round()))
-          .then((value) {
-        controller.forward();
-      });
     }
   }
 
   @override
+  /// Disposes the animation controller to free up resources.
   void dispose() {
     controller.dispose();
     super.dispose();
   }
 
   @override
-
   /// Builds the widget tree for the UpDownAnimation.
   ///
   /// If the widget is animatable, it wraps the provided child widget
@@ -79,12 +81,12 @@ class UpDownAnimationState extends State<UpDownAnimation>
   Widget build(BuildContext context) {
     return isAnimatable
         ? FadeTransition(
-            opacity: fadeAnimation,
-            child: SlideTransition(
-              position: translateAnimation,
-              child: widget.child,
-            ),
-          )
+          opacity: fadeAnimation,
+          child: SlideTransition(
+            position: translateAnimation,
+            child: widget.child,
+          ),
+        )
         : widget.child;
   }
 }

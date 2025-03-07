@@ -47,7 +47,7 @@ class ExchangeRatePage extends StatelessWidget {
                 _buildDatePickers(cubit),
                 verticalSpace(16),
                 _buildCurrencyDropdowns(cubit),
-                verticalSpace(20),
+                verticalSpace(16),
                 _buildFetchButton(context),
                 verticalSpace(6),
                 Divider(color: ColorsManager.gray, thickness: 0.8),

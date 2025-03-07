@@ -3,7 +3,7 @@ import '../../../../core/utils/constants.dart';
 import '../model/exchange_rate_model.dart';
 // date: 6 March 2025
 // by: Fouad
-// last modified at: 6 March 2025
+// last modified at: 7 March 2025
 // purpose: Create a class that fetches exchange rates from the API.
 // The class takes a Dio object as a parameter and uses it to make requests.
 
@@ -22,9 +22,13 @@ class ExchangeRateRemoteDataSource {
   /// - [endDate]: The end date for the exchange rates in YYYY-MM-DD format.
   /// - [base]: The base currency code (e.g., USD).
   /// - [target]: The target currency code (e.g., EUR).
+  /// - [page]: The page number for pagination (starting from 1).
   ///
   /// Returns:
   /// - A [Future] that completes with an [ExchangeRateModel] containing the exchange rates.
+  /// - The exchange rates are paginated based on the [page] parameter.
+  /// - The exchange rates are sorted by date in ascending order.
+  /// - The exchange rates are converted to the target currency.
 
   Future<ExchangeRateModel> getExchangeRates(
     String startDate,

@@ -8,7 +8,7 @@ import '../../features/exchange_rates/presentation/controllers/exchange_rate_cub
 
 // date: 6 March 2025
 // by: Fouad
-// last modified at: 6 March 2025
+// last modified at: 7 March 2025
 // purpose: Create a dependency injection file that registers all the dependencies.
 // The dependencies include the Dio client, data source, repository, use case, and cubit.
 // The dependencies are registered using the GetIt package.

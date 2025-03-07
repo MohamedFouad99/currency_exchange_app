@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+//date: 6 March 2025
+//by: Fouad
+//last modified at: 6 March 2025
+//purpose: Create a class that contains font weights used in the application.
 class FontWeightHelper {
   static const FontWeight thin = FontWeight.w100;
   static const FontWeight extraLight = FontWeight.w200;

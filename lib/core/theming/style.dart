@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'colors.dart';
 import 'font_weight_helper.dart';
 
+//date: 6 March 2025
+//by: Fouad
+//last modified at: 6 March 2025
+//purpose: Create a class that contains text styles used in the application.
 class TextStyles {
   static TextStyle font14DarkBlueRegular = TextStyle(
     fontFamily: 'Almarai',
