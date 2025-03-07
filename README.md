@@ -15,6 +15,10 @@
 
 ### 🔹 User-Friendly Interface – Intuitive and responsive design.
 
+
+[📹 Watch Demo](https://www.loom.com/share/582d8b30eec641b0ab4a6d3c6811b157)
+
+
 # 📂 Project Structure
 ## 📂 lib/  
 ### ├── 📂 core/                              # Core utilities and configurations  
