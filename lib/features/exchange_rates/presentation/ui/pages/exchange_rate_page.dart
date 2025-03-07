@@ -14,6 +14,7 @@ import '../../../../../core/theming/colors.dart';
 import '../../../../../core/theming/style.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/drop_down_item.dart';
+import 'package:intl/intl.dart';
 
 class ExchangeRatePage extends StatelessWidget {
   const ExchangeRatePage({super.key});
@@ -41,7 +42,6 @@ class ExchangeRatePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //  verticalSpace(16),
                 BlocBuilder<ExchangeRateCubit, ExchangeRateState>(
                   builder: (context, state) {
                     return Row(
@@ -59,6 +59,7 @@ class ExchangeRatePage extends StatelessWidget {
                                 onTap: () async {
                                   DateTime? pickedDate = await showDatePicker(
                                     context: context,
+
                                     initialDate:
                                         cubit.startDate != null
                                             ? DateTime.parse(cubit.startDate!)
@@ -67,6 +68,31 @@ class ExchangeRatePage extends StatelessWidget {
                                       Duration(days: 365),
                                     ),
                                     lastDate: DateTime.now(),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: Theme.of(context).copyWith(
+                                          colorScheme: ColorScheme.light(
+                                            primary:
+                                                ColorsManager
+                                                    .primary, // Header background color
+                                            onPrimary:
+                                                ColorsManager
+                                                    .white, // Header text color
+                                            onSurface:
+                                                ColorsManager
+                                                    .darkBlue, // Text color
+                                          ),
+                                          textButtonTheme: TextButtonThemeData(
+                                            style: TextButton.styleFrom(
+                                              foregroundColor:
+                                                  ColorsManager
+                                                      .primary, // Button text color
+                                            ),
+                                          ),
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
                                   );
                                   if (pickedDate != null) {
                                     cubit.setStartDate(
@@ -112,6 +138,31 @@ class ExchangeRatePage extends StatelessWidget {
                                               Duration(days: 365),
                                             ),
                                     lastDate: DateTime.now(),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: Theme.of(context).copyWith(
+                                          colorScheme: ColorScheme.light(
+                                            primary:
+                                                ColorsManager
+                                                    .primary, // Header background color
+                                            onPrimary:
+                                                ColorsManager
+                                                    .white, // Header text color
+                                            onSurface:
+                                                ColorsManager
+                                                    .darkBlue, // Text color
+                                          ),
+                                          textButtonTheme: TextButtonThemeData(
+                                            style: TextButton.styleFrom(
+                                              foregroundColor:
+                                                  ColorsManager
+                                                      .primary, // Button text color
+                                            ),
+                                          ),
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
                                   );
                                   if (pickedDate != null) {
                                     cubit.setEndDate(
@@ -268,12 +319,13 @@ class ExchangeRatePage extends StatelessWidget {
                 ],
                 rows:
                     state.rates.map((entry) {
+                      DateTime date = DateTime.parse(entry.key);
                       return DataRow(
                         cells: [
                           DataCell(
                             Center(
                               child: Text(
-                                entry.key,
+                                DateFormat('dd MMMM yyyy').format(date),
                                 style: TextStyles.font14DarkBlueBold,
                                 textAlign: TextAlign.center,
                               ),
