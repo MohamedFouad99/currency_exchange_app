@@ -4,6 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theming/colors.dart';
 import '../../../../../core/theming/style.dart';
 
+// date: 7 March 2025
+// by: Fouad
+// last modified at: 7 March 2025
+// purpose: Create a class that represents a custom text form field widget.
+// The class takes various parameters to customize the appearance and behavior of the text form field.
 class AppTextFormField extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
   final InputBorder? focusedBorder;

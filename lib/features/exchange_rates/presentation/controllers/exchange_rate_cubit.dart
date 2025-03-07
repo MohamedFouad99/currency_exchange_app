@@ -7,7 +7,7 @@ import 'exchange_rate_state.dart';
 
 // date: 6 March 2025
 // by: Fouad
-// last modified at: 6 March 2025
+// last modified at: 7 March 2025
 // purpose: Create a cubit class that fetches exchange rates from the repository.
 // The cubit class extends the Cubit class and implements the fetchRates method.
 // The cubit class emits states based on the result of the exchange rate use case.
