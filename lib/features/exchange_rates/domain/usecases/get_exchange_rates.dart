@@ -22,6 +22,6 @@ class GetExchangeRates {
     String target,
     int page,
   ) {
-    return repository.getExchangeRates(startDate, endDate, base, target, page);
+    return repository.getExchangeRates(startDate, endDate, base, target);
   }
 }

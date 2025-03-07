@@ -24,7 +24,6 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
     String endDate,
     String base,
     String target,
-    int page,
   ) async {
     try {
       final result = await remoteDataSource.getExchangeRates(
@@ -32,7 +31,6 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
         endDate,
         base,
         target,
-        page,
       );
       return Right(result);
     } catch (e) {

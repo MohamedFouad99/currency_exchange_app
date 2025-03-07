@@ -16,6 +16,5 @@ abstract class ExchangeRateRepository {
     String endDate,
     String base,
     String target,
-    int page,
   );
 }
